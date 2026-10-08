@@ -1,4 +1,4 @@
-# Kernel inference for opinion dynamics
+#Learning Opinions with Latent Attention(LOLA)
 
 Code and data for inferring the interaction kernel of stochastic opinion-dynamics models with latent attention mechanims
 
