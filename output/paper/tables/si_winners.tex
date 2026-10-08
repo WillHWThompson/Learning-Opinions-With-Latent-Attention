@@ -1,0 +1,22 @@
+\begin{tabular}{lllllrrrrr}
+\toprule
+panel & kernel & noise & arm & $\phi$ & $\lambda$ & $\sigma$ / $b$ & $\pi$ & $\mu_0$ & MLL \\
+\midrule
+\adamsLo{} & SAR & Laplace mixture & pairwise & 1.36 & 0.299 & 0.127 & 0.439 & $3.45\times10^{-3}$ & 1.154 \\
+\adamsMid{} & SAR & Laplace mixture & pairwise & 1.13 & 0.484 & 0.0788 & 0.579 & $2.94\times10^{-3}$ & 1.191 \\
+\adamsHi{} & SBC & Laplace mixture & pairwise & 23.7, 0.785 & 0.559 & 0.0549 & 0.781 & $2.83\times10^{-3}$ & 1.252 \\
+\takacsCtl{} & RFF & Laplace mixture & pairwise & $\gamma=1.25$ & 0.353 & 0.0773 & 0.899 & 0.0509 & 0.957 \\
+\takacsDis{} & SAR & Laplace mixture & pairwise & 1.72 & 0.364 & 0.077 & 0.91 & -0.05 & 0.957 \\
+\takacsInt{} & RFF & Laplace mixture & pairwise & $\gamma=1.25$ & 0.827 & 0.0687 & 0.93 & -0.0494 & 1.015 \\
+\takacsOne{} & RFF & Laplace mixture & pairwise & $\gamma=1$ & 0.538 & 0.117 & 0.925 & 0.0504 & 0.549 \\
+\becker{} & SBC & Laplace mixture & pairwise & -0.182, 0.0718 & 0.882 & 0.225 & 0.806 & 0.103 & -0.457 \\
+\vkg{} & RFF & Laplace mixture & pairwise & $\gamma=2.78$ & 0.575 & 0.05 & 0.748 & 0.0203 & 1.220 \\
+\vkc{} & BC & Laplace mixture & pairwise & 0.4 & 0.335 & 0.0626 & 0.927 & 0.0201 & 1.116 \\
+\senate{} & RFF & Laplace & pairwise & $\gamma=1.8$ & 0.47 & 0.0571 &  &  & 1.068 \\
+\house{} & SBC & Laplace mixture & pairwise & 5.28, -0.27 & 1.09 & 0.0501 & 0.869 & $-2.72\times10^{-3}$ & 1.252 \\
+\cmv{} & SBC & Laplace mixture & pairwise & 40.4, 1.15 & 1 & 0.0448 & 0.706 & $-5.24\times10^{-5}$ & 0.985 \\
+\spinos{} & RFF & Gaussian & mean field & $\gamma=0.5$ & 1.03 & 0.399 &  &  & -0.317 \\
+\kozitsin{} & BC & Laplace mixture & mean field & 0.0106 & 0.461 & 0.0281 & 0.619 & $-4.98\times10^{-5}$ & 2.784 \\
+\markets{} & SAR & Laplace mixture & pairwise & 1.89 & 0.736 & 0.0816 & 0.323 & $7.87\times10^{-4}$ & 1.106 \\
+\bottomrule
+\end{tabular}

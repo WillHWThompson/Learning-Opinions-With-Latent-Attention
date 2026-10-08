@@ -1,0 +1,25 @@
+{\small\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llcccccc}
+\toprule
+ & & \multicolumn{3}{c}{one-SE rule} & \multicolumn{3}{c}{argmax} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}
+axis & true level & $n{=}16$ & $n{=}64$ & $n{=}256$ & $n{=}16$ & $n{=}64$ & $n{=}256$ \\
+\midrule
+kernel & DeGroot & 0.79 & 0.79 & 0.76 & 0.31 & 0.28 & 0.26 \\
+ & BC & 0.63 & 0.64 & 0.68 & 0.62 & 0.64 & 0.68 \\
+ & SBC & 0.99 & 1.00 & 1.00 & 0.94 & 0.99 & 1.00 \\
+ & SAR & 0.98 & 0.99 & 0.98 & 0.92 & 0.94 & 0.87 \\
+kernel class & linear & 0.79 & 0.79 & 0.76 & 0.31 & 0.28 & 0.26 \\
+ & nonlinear & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 \\
+DeGroot vs RFF & DeGroot & 0.98 & 0.97 & 0.94 & 0.79 & 0.79 & 0.76 \\
+ & RFF & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 \\
+noise & Gaussian & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 \\
+ & Laplace & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 \\
+retention & no gate & 0.99 & 1.00 & 1.00 & 0.94 & 1.00 & 1.00 \\
+ & gate & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 \\
+drift & no drift & 0.89 & 0.85 & 0.84 & 0.62 & 0.59 & 0.54 \\
+ & drift & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 \\
+selection & mean field & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 \\
+ & pairwise & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 \\
+\bottomrule
+\end{tabular}}

@@ -1,0 +1,68 @@
+# One simulated panel with known truth (Barabasi-Albert network, N=500; sigmoidal bounded
+# confidence kernel phi=[8, 0.3], lambda=0.5; Laplace noise sigma=0.01; mover gate pi=0.5),
+# fitted by every kernel, noise model and representation.
+defaults:
+  cv_fold_index: [0, 1, 2, 3, 4]
+  cv_num_folds: 5
+  ll_stop_patience: 10
+  ll_stopping_criterion: 1.0e-06
+  lmbda_init: 0.5
+  lmbda_min: 0.001
+  max_em_iter: 600
+  sigma_init: 0.01
+  gd_rate: 0.01
+  max_gd_iter: 100
+variants:
+  gaussian_nogate:
+    noise_model: gaussian
+  laplace_nogate:
+    noise_model: laplace
+  gaussian_gate:
+    noise_model: gaussian
+    infer_pi: true
+    init_pi: 0.5
+    decoupled_scale: true
+    init_b_null: 0.01
+    b_null_min: 1.0e-05
+  laplace_gate:
+    noise_model: laplace
+    infer_pi: true
+    init_pi: 0.5
+    decoupled_scale: true
+    init_b_null: 0.01
+    b_null_min: 1.0e-05
+arms:
+  pairwise:
+    representation: pairwise
+  meanfield:
+    representation: neighbour_mean_field
+kernels:
+  bc:
+    kernel_func: bounded_confidence
+    optimization_method: bisection
+    bisection_max_iter: 500
+    gd_rate: 0.1
+    max_gd_iter: 250
+    phi_init: [[0.1], [0.5], [1.0], [2.0]]
+  sbc:
+    kernel_func: sigmoidal_bounded_confidence
+    phi_init: [[2.0, 0.2], [8.0, 0.3], [20.0, 0.5], [40.0, 0.4]]
+  degroot:
+    kernel_func: simplified_degroot
+    phi_init: [[0.1], [0.5], [1.0], [2.0]]
+  rzb:
+    kernel_func: rzb
+    phi_init: [[0.1], [0.5], [1.0], [2.0]]
+  legendre:
+    kernel_func: legendre
+    optimization_method: closed_form
+    phi_init: [[0.5]]
+  rff:
+    kernel_func: random_fourier
+    rff_seed: [42]
+    phi_init: [[0.5]]
+panels:
+  synthetic_2e_network:
+    arms: [pairwise, meanfield]
+    kernels: [bc, sbc, degroot, rzb, legendre, rff]
+    rff_gamma: [5.733]

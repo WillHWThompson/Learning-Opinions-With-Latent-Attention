@@ -1,0 +1,32 @@
+__pycache__/
+*.egg-info/
+.snakemake/
+.DS_Store
+logs/
+
+# Built by the pipeline: fits, exports and the paper's outputs other than its figures and tables
+results/
+figure_data/
+figure_data.zip
+output/*
+!output/paper/
+
+# Raw downloads of the panel builders (scripts/data/)
+data/raw/
+
+# Local-only files that never leave this machine
+/CLAUDE.md
+/.claude/
+/.remember/
+/.superpowers/
+/.worktrees/
+/guides/
+/site/
+/paper/
+/docs/
+/notebooks/
+/presentations/
+/figures/
+/data/plos_pone_0157685/
+*.db
+.pytest_cache/

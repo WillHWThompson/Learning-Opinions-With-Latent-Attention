@@ -1,0 +1,17 @@
+{\small\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lccc}
+\toprule
+setting & true DeGroot & true SBC & true SAR \\ & \multicolumn{3}{c}{selected kernel / noise recovered} \\
+\midrule
+network, $\pi{=}$0.5 & BC $\times$ / \checkmark & SBC \checkmark / \checkmark & SAR \checkmark / \checkmark \\
+network, $\pi{=}$1 & SBC $\times$ / \checkmark & SBC \checkmark / \checkmark & SAR \checkmark / \checkmark \\
+network, $\pi{=}$0.5, SAR side study: mean-field arm & --- & --- & RFF $\times$ / \checkmark \\
+network, $\pi{=}$0.5, SAR side study: pairwise RFF & --- & --- & RFF $\times$ / \checkmark \\
+dyadic, $n{=}10^3$, $\pi{=}$0.5 & DeGroot \checkmark / \checkmark & SBC \checkmark / \checkmark & SAR \checkmark / \checkmark \\
+dyadic, $n{=}4{\times}10^3$, $\pi{=}$0.5 & DeGroot \checkmark / \checkmark & SBC \checkmark / \checkmark & SAR \checkmark / \checkmark \\
+dyadic, $n{=}10^5$, $\pi{=}$0.5 & SAR $\times$ / \checkmark & SBC \checkmark / \checkmark & SAR \checkmark / \checkmark \\
+dyadic, $n{=}10^3$, $\pi{=}$1 & DeGroot \checkmark / $\times$ & SBC \checkmark / $\times$ & SAR \checkmark / \checkmark \\
+dyadic, $n{=}4{\times}10^3$, $\pi{=}$1 & SAR $\times$ / \checkmark & SBC \checkmark / \checkmark & SAR \checkmark / $\times$ \\
+dyadic, $n{=}10^5$, $\pi{=}$1 & SAR $\times$ / \checkmark & SBC \checkmark / \checkmark & SAR \checkmark / \checkmark \\
+\bottomrule
+\end{tabular}}

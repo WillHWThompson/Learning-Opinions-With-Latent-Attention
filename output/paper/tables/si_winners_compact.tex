@@ -1,0 +1,23 @@
+{\footnotesize\setlength{\tabcolsep}{2pt}
+\begin{tabular}{llrrrrr}
+\toprule
+dataset & model (kernel, noise, arm) & $\hat\phi$ / $\hat\gamma$ & $\hat\lambda$ & $\hat\eta_1$ & $\hat\pi$ & MLL/transition \\
+\midrule
+\adamsLo{} & SAR, Laplace mixture & 1.36 & 0.27 & 0.12 & 0.45 & 1.154 \\
+\adamsMid{} & SAR, Laplace mixture & 1.13 & 0.49 & 0.077 & 0.58 & 1.191 \\
+\adamsHi{} & SBC, Laplace mixture & 0.785, 23.7 & 0.57 & 0.053 & 0.8 & 1.252 \\
+\takacsCtl{} & RFF, Laplace mixture & $\hat\gamma=1.25$ & 0.33 & 0.075 & 0.86 & 0.957 \\
+\takacsDis{} & SAR, Laplace mixture & 1.72 & 0.36 & 0.076 & 0.9 & 0.957 \\
+\takacsInt{} & RFF, Laplace mixture & $\hat\gamma=1.25$ & 0.53 & 0.068 & 0.93 & 1.015 \\
+\takacsOne{} & RFF, Laplace mixture & $\hat\gamma=1$ & 0.52 & 0.12 & 0.93 & 0.549 \\
+\becker{} & SBC, Laplace mixture & 0.0718, -0.182 & 0.82 & 0.22 & 0.8 & -0.457 \\
+\vkg{} & RFF, Laplace mixture, latent selection & $\hat\gamma=2.78$ & 0.58 & 0.049 & 0.75 & 1.220 \\
+\vkc{} & BC, Laplace mixture, latent selection & 0.4 & 0.31 & 0.06 & 0.93 & 1.116 \\
+\senate{} & RFF, Laplace, latent selection & $\hat\gamma=1.8$ & 0.53 & 0.057 &  & 1.068 \\
+\house{} & RFF, Laplace, latent selection & $\hat\gamma=2.29$ & 0.073 & 0.048 &  & 1.252 \\
+\cmv{} & SBC, Laplace mixture, latent selection & 1.15, 40.4 & 1 & 0.046 & 0.7 & 0.985 \\
+\spinos{} & RFF, Gaussian, neighbor aggregation & $\hat\gamma=0.5$ & 0.98 & 0.39 &  & -0.317 \\
+\kozitsin{} & null (tied), Laplace mixture &  &  & 0.027 & 0.63 & 2.784 \\
+\markets{} & SAR, Laplace mixture, latent selection & 1.89 & 0.69 & 0.08 & 0.32 & 1.106 \\
+\bottomrule
+\end{tabular}}

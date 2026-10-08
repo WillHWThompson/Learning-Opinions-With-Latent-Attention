@@ -1,0 +1,20 @@
+# One SLURM job per Snakemake job. Fits ask for a GPU; set the partition and constraint
+# for your cluster here (these are the University of Vermont's VACC values).
+jobs: 100
+printshellcmds: true
+keep-going: true
+rerun-incomplete: true
+restart-times: 2
+latency-wait: 60
+max-jobs-per-second: 2
+default-resources:
+  - mem_mb=16000
+  - runtime_min=120
+  - partition=general
+  - gpus=0
+set-resources:
+  - fit:partition=nvgpu
+  - fit:gpus=1
+  - discrimination:partition=nvgpu
+  - discrimination:gpus=1
+cluster: "mkdir -p logs/slurm && sbatch --parsable --job-name=smk-{rule} --cpus-per-task={threads} --mem={resources.mem_mb} --time={resources.runtime_min} --partition={resources.partition} --gres=gpu:{resources.gpus} --output=logs/slurm/%j.out"

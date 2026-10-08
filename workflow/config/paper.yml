@@ -1,0 +1,484 @@
+# The canonical sweep: every model the paper fits to the empirical panels. Each panel is fitted
+# by every kernel it lists, under four noise models (Gaussian or Laplace, with or without the
+# mover gate) and in each representation arm it lists; random features run over the panel's
+# bandwidth grid. Expanded by kernel_inference/sweep.py.
+defaults:
+  cv_fold_index: [0, 1, 2, 3, 4]
+  cv_num_folds: 5
+  ll_stop_patience: 10
+  ll_stopping_criterion: 1.0e-06
+  lmbda_min: 0.001
+variants:
+  gaussian_nogate:
+    noise_model: gaussian
+  laplace_nogate:
+    noise_model: laplace
+  gaussian_gate:
+    noise_model: gaussian
+    b_null_min: 1.0e-05
+    decoupled_scale: true
+    infer_mu_null: true
+    infer_pi: true
+    init_pi: 0.5
+  laplace_gate:
+    noise_model: laplace
+    b_null_min: 1.0e-05
+    decoupled_scale: true
+    infer_mu_null: true
+    infer_pi: true
+    init_pi: 0.5
+arms:
+  pairwise:
+    representation: pairwise
+  meanfield:
+    representation: neighbour_mean_field
+kernels:
+  bc:
+    kernel_func: bounded_confidence
+    bisection_max_iter: 500
+    optimization_method: bisection
+  sbc:
+    kernel_func: sigmoidal_bounded_confidence
+    gd_rate: 0.01
+    max_gd_iter: 100
+  degroot:
+    kernel_func: simplified_degroot
+    degroot_unit_gain: true
+    gd_rate: 0.01
+    max_gd_iter: 100
+    phi_init: [[1.0]]
+  rzb:
+    kernel_func: rzb
+    gd_rate: 0.01
+    kernel_phi_floor: 0.001
+    kernel_positive_phi_transform: true
+    max_gd_iter: 20
+  'null':
+    kernel_func: 'null'
+    gd_rate: 0.01
+    max_gd_iter: 100
+    phi_init: [[0.0]]
+  legendre:
+    kernel_func: legendre
+    bisection_max_iter: 500
+    legendre_unit_gain_at_zero: true
+    optimization_method: closed_form
+    phi_init: [[0.5]]
+  rff:
+    kernel_func: random_fourier
+    rff_seed: [0, 1, 2, 3]
+    optimization_method: closed_form
+    phi_init: [[0.5]]
+    rff_unit_gain_at_zero: true
+panels:
+  cmv:
+    arms: [pairwise, meanfield]
+    kernels: [bc, sbc, degroot, rzb, 'null', legendre, rff]
+    rff_gamma: [0.51375, 1.0275, 2.055, 4.11, 8.22]
+    kernel:
+      rff:
+        gd_rate: 0.01
+        max_gd_iter: 100
+      legendre:
+        legendre_max_distance: 1.0479
+      bc:
+        phi_init: [[0.0157], [0.4865], [0.9352], [0.9931]]
+      rzb:
+        phi_init: [[0.0157], [0.4865], [0.9352], [0.9931]]
+      sbc:
+        phi_init: [[2.0, 0.0157], [8.0, 0.4865], [20.0, 0.9352], [40.0, 0.9931]]
+    gate:
+      init_b_null: 0.012183349579572678
+    set:
+      max_em_iter: 600
+      no_opinion_value: 0.5
+      use_async_em: true
+    noise:
+      gaussian:
+        sigma_init: 0.361260681733489
+      laplace:
+        sigma_init: 0.24366699159145355
+  house:
+    arms: [pairwise, meanfield]
+    kernels: [bc, sbc, degroot, rzb, 'null', legendre, rff]
+    rff_gamma: [2.2935, 4.587, 9.174, 18.348, 36.696]
+    set:
+      dequantize: true
+      grid_h: 0.000999987125
+      max_em_iter: 600
+    kernel:
+      rff:
+        gd_rate: 0.01
+        max_gd_iter: 100
+      legendre:
+        legendre_max_distance: 1.7042
+      bc:
+        phi_init: [[0.049], [0.109], [0.205], [0.406]]
+      rzb:
+        phi_init: [[0.049], [0.109], [0.205], [0.406]]
+      sbc:
+        phi_init: [[2.0, 0.049], [8.0, 0.109], [20.0, 0.205], [40.0, 0.406]]
+    gate:
+      init_b_null: 0.0017000003372453802
+  kozitsin:
+    arms: [pairwise, meanfield]
+    kernels: [bc, sbc, degroot, rzb, 'null', legendre, rff]
+    rff_gamma: [1.7785, 3.557, 7.114, 14.228, 28.456]
+    kernel:
+      rff:
+        gd_rate: 0.01
+        max_gd_iter: 100
+      legendre:
+        legendre_max_distance: 1.0343
+      bc:
+        phi_init: [[0.0621], [0.1406], [0.2631], [0.3961]]
+      rzb:
+        phi_init: [[0.0621], [0.1406], [0.2631], [0.3961]]
+      sbc:
+        phi_init: [[2.0, 0.0621], [8.0, 0.1406], [20.0, 0.2631], [40.0, 0.3961]]
+    gate:
+      init_b_null: 0.0001
+    set:
+      max_em_iter: 600
+      sigma_init: 0.02
+  markets:
+    arms: [pairwise, meanfield]
+    kernels: [bc, sbc, degroot, rzb, 'null', legendre, rff]
+    rff_gamma: [4.16125, 8.3225, 16.645, 33.29, 66.58]
+    kernel:
+      rff:
+        gd_rate: 0.01
+        max_gd_iter: 100
+      legendre:
+        legendre_max_distance: 0.8327
+      bc:
+        phi_init: [[0.0246], [0.0601], [0.1327], [0.2369]]
+      rzb:
+        phi_init: [[0.0246], [0.0601], [0.1327], [0.2369]]
+      sbc:
+        phi_init: [[2.0, 0.0246], [8.0, 0.0601], [20.0, 0.1327], [40.0, 0.2369]]
+    gate:
+      init_b_null: 0.0004999996627546203
+    set:
+      max_em_iter: 600
+      use_async_em: true
+    noise:
+      gaussian:
+        sigma_init: 0.01482599
+      laplace:
+        sigma_init: 0.009999993255092406
+  plos_counting:
+    arms: [pairwise, meanfield]
+    kernels: [bc, sbc, degroot, rzb, 'null', legendre, rff]
+    rff_gamma: [1.78575, 3.5715, 7.143, 14.286, 28.572]
+    set:
+      dequantize: true
+      grid_h: 0.001999974251
+      max_em_iter: 300
+      sigma_init: 0.0385475
+    gate:
+      init_b_null: 0.0019274
+    kernel:
+      legendre:
+        legendre_max_distance: 1.0185
+      bc:
+        phi_init: [[0.064], [0.14], [0.26], [0.4]]
+      rzb:
+        phi_init: [[0.064], [0.14], [0.26], [0.4]]
+      sbc:
+        phi_init: [[2.0, 0.064], [8.0, 0.14], [20.0, 0.26], [40.0, 0.4]]
+  plos_gauging:
+    arms: [pairwise, meanfield]
+    kernels: [bc, sbc, degroot, rzb, 'null', legendre, rff]
+    rff_gamma: [2.77775, 5.5555, 11.111, 22.222, 44.444]
+    set:
+      dequantize: true
+      grid_h: 0.009999990463
+      max_em_iter: 300
+      sigma_init: 0.044478
+    gate:
+      init_b_null: 0.0022239
+    kernel:
+      legendre:
+        legendre_max_distance: 0.9975
+      bc:
+        phi_init: [[0.05], [0.09], [0.16], [0.28]]
+      rzb:
+        phi_init: [[0.05], [0.09], [0.16], [0.28]]
+      sbc:
+        phi_init: [[2.0, 0.05], [8.0, 0.09], [20.0, 0.16], [40.0, 0.28]]
+  senate:
+    arms: [pairwise, meanfield]
+    kernels: [bc, sbc, degroot, rzb, 'null', legendre, rff]
+    rff_gamma: [1.7985, 3.597, 7.194, 14.388, 28.776]
+    set:
+      dequantize: true
+      grid_h: 0.000999987125
+      max_em_iter: 600
+    kernel:
+      rff:
+        gd_rate: 0.01
+        max_gd_iter: 100
+      legendre:
+        legendre_max_distance: 1.4795
+      bc:
+        phi_init: [[0.0623], [0.139], [0.297], [0.61]]
+      rzb:
+        phi_init: [[0.0623], [0.139], [0.297], [0.61]]
+      sbc:
+        phi_init: [[2.0, 0.0623], [8.0, 0.139], [20.0, 0.297], [40.0, 0.61]]
+    gate:
+      init_b_null: 0.0017000003372453802
+  spinos:
+    arms: [pairwise, meanfield]
+    kernels: [bc, sbc, degroot, rzb, 'null', legendre, rff]
+    rff_gamma: [0.5, 1.0, 2.0, 4.0, 8.0]
+    set:
+      dequantize: true
+      grid_h: 0.25
+      max_em_iter: 600
+      use_async_em: true
+    kernel:
+      rff:
+        gd_rate: 0.01
+        max_gd_iter: 100
+      legendre:
+        legendre_max_distance: 1.05
+      bc:
+        phi_init: [[0.5], [0.5], [0.75], [1.0]]
+      rzb:
+        phi_init: [[0.5], [0.5], [0.75], [1.0]]
+      sbc:
+        phi_init: [[2.0, 0.5], [8.0, 0.5], [20.0, 0.75], [40.0, 1.0]]
+    gate:
+      init_b_null: 0.0125
+  adams:
+    arms: [pairwise]
+    kernels: [bc, sbc, degroot, rzb, 'null', rff]
+    rff_gamma: [1.975496, 3.950992, 7.901984, 15.803968, 31.607936]
+    gate:
+      init_b_null: 0.00221432
+    set:
+      max_em_iter: 300
+      sigma_init: 0.0442864
+    kernel:
+      bc:
+        phi_init: [[0.1], [0.5], [1.0], [2.0]]
+      rzb:
+        phi_init: [[0.1], [0.5], [1.0], [2.0]]
+      sbc:
+        phi_init: [[2.0, 0.2], [8.0, 0.3], [20.0, 0.5], [40.0, 0.4]]
+  adams_p02:
+    arms: [pairwise]
+    kernels: [bc, sbc, degroot, rzb, 'null', rff]
+    rff_gamma: [1.082035, 2.164071, 4.328142, 8.656284, 17.312568]
+    gate:
+      init_b_null: 0.00165498
+    set:
+      max_em_iter: 300
+      sigma_init: 0.0330996
+    kernel:
+      bc:
+        phi_init: [[0.086045], [0.231046], [0.460139], [0.662106]]
+      rzb:
+        phi_init: [[0.086045], [0.231046], [0.460139], [0.662106]]
+      sbc:
+        phi_init: [[2.0, 0.086045], [8.0, 0.231046], [20.0, 0.460139], [40.0, 0.662106]]
+  adams_p05:
+    arms: [pairwise]
+    kernels: [bc, sbc, degroot, rzb, 'null', rff]
+    rff_gamma: [1.87516, 3.750319, 7.500638, 15.001276, 30.002552]
+    gate:
+      init_b_null: 0.00212264
+    set:
+      max_em_iter: 300
+      sigma_init: 0.0424528
+    kernel:
+      bc:
+        phi_init: [[0.054993], [0.133322], [0.32394], [0.573835]]
+      rzb:
+        phi_init: [[0.054993], [0.133322], [0.32394], [0.573835]]
+      sbc:
+        phi_init: [[2.0, 0.054993], [8.0, 0.133322], [20.0, 0.32394], [40.0, 0.573835]]
+  adams_p08:
+    arms: [pairwise]
+    kernels: [bc, sbc, degroot, rzb, 'null', rff]
+    rff_gamma: [2.863291, 5.726583, 11.453166, 22.906332, 45.812664]
+    gate:
+      init_b_null: 0.002764125
+    set:
+      max_em_iter: 300
+      sigma_init: 0.0552825
+    kernel:
+      bc:
+        phi_init: [[0.036543], [0.087312], [0.1922], [0.39742]]
+      rzb:
+        phi_init: [[0.036543], [0.087312], [0.1922], [0.39742]]
+      sbc:
+        phi_init: [[2.0, 0.036543], [8.0, 0.087312], [20.0, 0.1922], [40.0, 0.39742]]
+  becker_hubless:
+    arms: [pairwise]
+    kernels: [bc, sbc, degroot, rzb, 'null', rff]
+    rff_gamma: [0.41875, 0.8375, 1.675, 3.35, 6.7]
+    kernel:
+      rff:
+        gd_rate: 0.01
+        max_gd_iter: 100
+      bc:
+        phi_init: [[0.1], [0.5], [1.0], [2.0]]
+      rzb:
+        phi_init: [[0.1], [0.5], [1.0], [2.0]]
+      sbc:
+        phi_init: [[2.0, 0.2], [8.0, 0.3], [20.0, 0.5], [40.0, 0.4]]
+    gate:
+      init_b_null: 0.006854499865101849
+    set:
+      max_em_iter: 600
+  takacs:
+    arms: [pairwise]
+    kernels: [bc, sbc, degroot, rzb, 'null', rff]
+    rff_gamma: [1.25, 2.5, 5.0, 10.0, 20.0]
+    set:
+      dequantize: true
+      grid_h: 0.009999990463
+      max_em_iter: 300
+      sigma_init: 0.07413
+    gate:
+      init_b_null: 0.0037065
+    kernel:
+      bc:
+        phi_init: [[0.1], [0.5], [1.0], [2.0]]
+      rzb:
+        phi_init: [[0.1], [0.5], [1.0], [2.0]]
+      sbc:
+        phi_init: [[2.0, 0.2], [8.0, 0.3], [20.0, 0.5], [40.0, 0.4]]
+  takacs_control:
+    arms: [pairwise]
+    kernels: [bc, sbc, degroot, rzb, 'null', rff]
+    rff_gamma: [1.25, 2.5, 5.0, 10.0, 20.0]
+    set:
+      dequantize: true
+      grid_h: 0.009999990463
+      max_em_iter: 300
+      sigma_init: 0.07413
+    gate:
+      init_b_null: 0.0037065
+    kernel:
+      bc:
+        phi_init: [[0.1], [0.2], [0.35], [0.558]]
+      rzb:
+        phi_init: [[0.1], [0.2], [0.35], [0.558]]
+      sbc:
+        phi_init: [[2.0, 0.1], [8.0, 0.2], [20.0, 0.35], [40.0, 0.558]]
+  takacs_disliking:
+    arms: [pairwise]
+    kernels: [bc, sbc, degroot, rzb, 'null', rff]
+    rff_gamma: [1.25, 2.5, 5.0, 10.0, 20.0]
+    set:
+      dequantize: true
+      grid_h: 0.009999990463
+      max_em_iter: 300
+      sigma_init: 0.07413
+    gate:
+      init_b_null: 0.0037065
+    kernel:
+      bc:
+        phi_init: [[0.1], [0.2], [0.4], [0.5]]
+      rzb:
+        phi_init: [[0.1], [0.2], [0.4], [0.5]]
+      sbc:
+        phi_init: [[2.0, 0.1], [8.0, 0.2], [20.0, 0.4], [40.0, 0.5]]
+  takacs_disliking_interior:
+    arms: [pairwise]
+    kernels: [bc, sbc, degroot, rzb, 'null', rff]
+    rff_gamma: [1.25, 2.5, 5.0, 10.0, 20.0]
+    set:
+      dequantize: true
+      grid_h: 0.009999990463
+      max_em_iter: 300
+      sigma_init: 0.07413
+    gate:
+      init_b_null: 0.0037065
+    kernel:
+      bc:
+        phi_init: [[0.1], [0.2], [0.3375], [0.5]]
+      rzb:
+        phi_init: [[0.1], [0.2], [0.3375], [0.5]]
+      sbc:
+        phi_init: [[2.0, 0.1], [8.0, 0.2], [20.0, 0.3375], [40.0, 0.5]]
+  takacs_study1:
+    arms: [pairwise]
+    kernels: [bc, sbc, degroot, rzb, 'null', rff]
+    rff_gamma: [1.0, 2.0, 4.0, 8.0, 16.0]
+    set:
+      dequantize: true
+      grid_h: 0.009999990463
+      max_em_iter: 300
+      sigma_init: 0.07413
+    gate:
+      init_b_null: 0.0037065
+    kernel:
+      bc:
+        phi_init: [[0.15], [0.25], [0.4], [0.6]]
+      rzb:
+        phi_init: [[0.15], [0.25], [0.4], [0.6]]
+      sbc:
+        phi_init: [[2.0, 0.15], [8.0, 0.25], [20.0, 0.4], [40.0, 0.6]]
+overrides:
+- where:
+    panel: cmv
+    arm: pairwise
+    kernel: rff
+  set:
+    e_step_chunk_size: 64
+- where:
+    panel: house
+    arm: pairwise
+    kernel: rff
+  set:
+    e_step_chunk_size: 32
+- where:
+    panel: kozitsin
+    arm: pairwise
+    kernel: rff
+  set:
+    e_step_chunk_size: 512
+- where:
+    panel: markets
+    arm: pairwise
+    kernel: rff
+  set:
+    e_step_chunk_size: 512
+- where:
+    panel: senate
+    arm: pairwise
+    kernel: rff
+  set:
+    e_step_chunk_size: 128
+- where:
+    panel: spinos
+    arm: pairwise
+    kernel: rff
+  set:
+    e_step_chunk_size: 256
+- where:
+    panel: cmv
+    variant: gaussian_gate
+    kernel: sbc
+  set:
+    events_dtype: float32
+    kernel_loss_checkpoint: true
+- where:
+    panel: cmv
+    variant: laplace_gate
+    kernel: sbc
+  set:
+    events_dtype: float32
+    kernel_loss_checkpoint: true
+- where:
+    panel: cmv
+    variant: laplace_nogate
+    kernel: sbc
+  set:
+    events_dtype: float32
+    kernel_loss_checkpoint: true

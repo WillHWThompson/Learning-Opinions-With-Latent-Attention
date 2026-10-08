@@ -1,0 +1,16 @@
+{\small\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrr}
+\toprule
+arm / noise & DeGroot & BC & SBC & SAR & RFF \\
+\midrule
+mean field / Gaussian & -0.563 & -0.561 & -0.548 & -0.548 & -0.548 \\
+mean field / Gaussian mixture & -0.288 & -0.286 & -0.273 & -0.273 & -0.273 \\
+mean field / Laplace & -0.518 & -0.524 & -0.517 & -0.557 & -0.523 \\
+mean field / Laplace mixture & -0.319 & -0.315 & -0.294 & -0.459 & -0.294 \\
+pairwise / Gaussian & -0.547 & -0.498 & -0.490 & -0.527 & -0.427 \\
+pairwise / Gaussian mixture & -0.234 & -0.186 & -0.038 & -0.069 & -0.039 \\
+pairwise / Laplace & -0.525 & -0.475 & -0.505 & -0.525 & -0.379 \\
+pairwise / Laplace mixture & -0.205 & -0.158 & \textbf{0} & -0.044 & \textbf{0} \\
+\bottomrule
+\end{tabular}}
+\par\smallskip{\footnotesize Synthetic data, truth: SBC kernel, Laplace mixture noise, $\pi=0.5$, $\lambda=0.5$, $\eta_1=0.01$. Gap in held-out MLL per transition to the best cell (bold, 0). }

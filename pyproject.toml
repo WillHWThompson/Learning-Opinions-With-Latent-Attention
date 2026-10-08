@@ -1,0 +1,19 @@
+[project]
+name = "kernel_inference"
+version = "1.0"
+requires-python = ">=3.10,<3.12"
+authors = [{name = "Will Thompson"}, {name = "Tom Gebhart"}, {name = "Moyi Tian"}, {name = "Linh Huyn"},
+           {name = "Vicki Modisette"}, {name = "Alex Weidman"}, {name = "Heather Zinn Brooks"},
+           {name = "Phil Chodrow"}]
+license = {text = "BSD-3-Clause"}
+dynamic = ["dependencies"]
+
+[tool.setuptools]
+packages = ["kernel_inference"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = "requirements.txt"}
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

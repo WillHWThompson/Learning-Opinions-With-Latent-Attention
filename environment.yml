@@ -1,0 +1,10 @@
+name: mrc-2023
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.10
+  - pip
+  - snakemake-minimal>=7.32
+  - pip:
+      - -r requirements.txt

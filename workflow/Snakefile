@@ -1,0 +1,137 @@
+"""Every figure and table of the paper, from raw data.
+
+    snakemake --profile workflow/profiles/slurm          # everything, fits on a GPU cluster
+    snakemake --profile workflow/profiles/local paper    # figures and tables from results/
+
+A sweep (workflow/config/<sweep>.yml) expands into model configurations; one job fits each on
+every fold and restart, and the sweep's fits are concatenated into results/<sweep>/fits.parquet.
+Exports in figure_data/ hold what the figures show; each figure module draws from them.
+"""
+from kernel_inference import sweep
+
+SWEEPS = ["paper", "synthetic_2e"]
+CONFIGS = {s: [c["fit"] for c in sweep.load(f"workflow/config/{s}.yml")] for s in SWEEPS}
+PANEL_BUILDERS = {
+    "plos": ["plos_gauging", "plos_counting"],
+    "takacs": ["takacs", "takacs_control", "takacs_disliking", "takacs_disliking_interior", "takacs_study1"],
+    "adams": ["adams", "adams_p02", "adams_p05", "adams_p08"],
+    "kozitsin": ["kozitsin"], "spinos": ["spinos"], "becker": ["becker_hubless"], "congress": ["senate", "house"],
+}
+FD = "figure_data/"
+FITS = expand("results/{sweep}/fits.parquet", sweep=SWEEPS)
+SCORES = FD + "scores.parquet"
+EXPORTS = {  # figure module: what `python scripts/figures/<module>.py export` writes
+    "scores": ["capability_ladder.json"],
+    "calibration": ["canonical_pit.npz", "canonical_pit_rungs.npz", "rung_pit_ad.json", "nonlinearity_by_rung_rff.json"],
+    "kernels": ["kernel_curves.json", "kernel_events.npz", "canonical_r_support.json"],
+}
+SYNTHETIC = {  # experiment: what `python scripts/synthetic.py <experiment>` writes
+    "network": [f"synthetic_noise_misspec{s}.csv" for s in
+                ("", "_pi1", "_rzb_pairwise_rff", "_shapes_rzb_pairwise_rff", "_rzb_nmf", "_shapes_rzb_nmf")],
+    "dyadic": [f"synthetic_dyadic_noise_misspec{s}.csv" for s in ("", "_pi1", "_shapes_gsel")],
+    "rzb_capability": ["synthetic_rzb_capability.json"],
+    "mechanism": ["synthetic_mechanism_direction_summary.csv", "synthetic_mechanism_direction_shapes.csv"],
+}
+FIGURES = {  # figure module: the figures it draws
+    "scores": ["fig_kernel_ladder_by_noise_pairwise", "fig_kernel_ladder_by_noise_meanfield", "fig_capability_ladder",
+               "fig_capability_ladder_wide", "fig_si_kernel_by_rung", "fig_si_kernel_by_rung_dg_rff",
+               "fig_si_kernel_by_rung_dg_rff_shapes", "fig_si_kernel_glyph_grid", "fig_si_nonlinearity_gap_scatter",
+               "fig_nl_before_after"],
+    "calibration": ["fig_si_qq_by_rung"],
+    "kernels": ["fig_kernel_arms_comparison_delta_latent", "fig_kernel_arms_comparison_kernel", "fig_si_kernel_arms_all",
+                "fig_si_kernel_comparison_full", "dyadic_kernel_comparison_full", "pairwise_kernel_comparison_full"],
+    "synthetic": ["fig_kernel_atlas", "fig_sbc_diagnostic", "fig_tv_sweep", "synthetic_2x2", "fig_rff_recovery",
+                  "fig_synthetic_2e_recovery", "fig_synthetic_rzb_2x2", "fig_synthetic_mechanism_direction"],
+}
+MODULE = {name: module for module, names in FIGURES.items() for name in names}
+HITRATES = FD + "synthetic_discrimination_hitrates.csv"
+SYNTHESIZED = [FD + f for files in SYNTHETIC.values() for f in files] + [HITRATES]
+EXPORTED = [FD + f for files in EXPORTS.values() for f in files]
+INPUTS = {"scores": [SCORES, FD + "capability_ladder.json", FD + "nonlinearity_by_rung_rff.json"],
+          "calibration": [SCORES] + [FD + f for f in EXPORTS["calibration"]],
+          "kernels": [SCORES] + [FD + f for f in EXPORTS["kernels"]],
+          "synthetic": [SCORES] + SYNTHESIZED}
+
+wildcard_constraints:
+    config=r"[a-z_]+/[a-z0-9_]+/[a-z0-9_]+",
+    sweep="|".join(SWEEPS),
+    task=r"\d{4}",
+
+
+rule paper:
+    input: expand("output/paper/figures/{name}.pdf", name=MODULE), "output/paper/tables/.done"
+
+
+rule panels:
+    """Rebuild the panels from raw downloads (they are committed; run with -F to check)."""
+    output: [f"data/panels/{p}/observations.parquet" for ps in PANEL_BUILDERS.values() for p in ps]
+    run:
+        for source in PANEL_BUILDERS:
+            shell(f"python scripts/data/{source}.py")
+
+
+rule fit:
+    input: lambda w: f"workflow/config/{w.sweep}.yml"
+    output: "results/{sweep}/parts/{config}.parquet"
+    threads: 4
+    resources:
+        mem_mb=lambda w, attempt: 32000 * attempt,
+        runtime_min=lambda w, attempt: 720 * attempt,
+    shell: "python scripts/run_fit.py {wildcards.config} {wildcards.sweep} cuda"
+
+
+rule collect:
+    input: lambda w: [f"results/{w.sweep}/parts/{c}.parquet" for c in CONFIGS[w.sweep]]
+    output: "results/{sweep}/fits.parquet"
+    run:
+        import pandas as pd
+        pd.concat(map(pd.read_parquet, sorted(input)), ignore_index=True).to_parquet(output[0], index=False)
+
+
+rule scores:
+    input: FITS
+    output: SCORES
+    shell: "python scripts/scores.py"
+
+
+for module, files in EXPORTS.items():
+    rule:
+        name: f"export_{module}"
+        input: FITS, SCORES
+        output: [FD + f for f in files]
+        params: module=module
+        shell: "python scripts/figures/{params.module}.py export"
+
+
+for experiment, files in SYNTHETIC.items():
+    rule:
+        name: f"synthetic_{experiment}"
+        output: [FD + f for f in files]
+        params: experiment=experiment
+        shell: "python scripts/synthetic.py {params.experiment}"
+
+
+rule discrimination:
+    """One of the 960 synthetic datasets of the discrimination sweep, every model fitted and scored."""
+    output: "results/synthetic_discrimination/summary_task{task}.parquet"
+    resources: mem_mb=32000, runtime_min=300
+    shell: "python scripts/synthetic.py discrimination {wildcards.task} --device cuda"
+
+
+rule hitrates:
+    input: expand("results/synthetic_discrimination/summary_task{task:04d}.parquet", task=range(960))
+    output: HITRATES
+    shell: "python scripts/synthetic.py hitrates"
+
+
+rule figure:
+    input: lambda w: INPUTS[MODULE[w.name]]
+    output: "output/paper/figures/{name}.pdf"
+    params: module=lambda w: MODULE[w.name]
+    shell: "python scripts/figures/{params.module}.py {wildcards.name}"
+
+
+rule tables:
+    input: SCORES, EXPORTED, SYNTHESIZED
+    output: touch("output/paper/tables/.done")
+    shell: "python scripts/tables.py"
